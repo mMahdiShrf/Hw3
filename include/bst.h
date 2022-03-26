@@ -3,14 +3,16 @@
 
 #include <iostream>
 #include <compare>
+#include <functional>
 
 class BST
 {
 public:
     class Node;
-    //Node*& get_root();
-    // void bfs(std::function<void(Node*& node)> func);
-    // size_t length();
+    BST(Node* _root);
+    Node*& get_root();
+    void bfs(std::function<void(Node*& node)> func);
+    //size_t length();
     // bool add_node(int value);
     // Node** find_node(int value);
     // Node** find_parrent(int value);
@@ -18,14 +20,14 @@ public:
     // bool delete_node(int value);
 
 private:
-    
+
     Node* root;
 };
 
 class BST::Node
 {
 public:
-    Node(int value, Node* left, Node* right);
+    Node(int value, Node* left=nullptr, Node* right=nullptr);
     Node();
     Node(const Node& node);
     friend std::ostream& operator<<(std::ostream& os, const Node& node);
