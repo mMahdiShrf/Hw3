@@ -103,14 +103,9 @@ bool BST::add_node(int value)
         if (value < root->value )
         {
             if (root->left != nullptr)
-            {   
-                std::cout << "left.." << std::endl;
-                add(root->left, value);
-            } 
+                add(root->left, value); 
             else
             {   
-                std::cout << "put.." << std::endl;
-                
                 root->left = address;
                 return;
             }
@@ -118,18 +113,11 @@ bool BST::add_node(int value)
         else if (value > root->value)
         {
             if (root->right != nullptr)
-            {   
-                std::cout << "right.." << std::endl;
                 add(root->right, value);
-            }
             else
             {   
-                std::cout << "pu.." << std::endl;
-                //std::cout << node << &node << std::endl;
                 root->right = address;
-                std::cout << root->right << root->right->value << std::endl;
                 return;
-
             }
         }
         else
@@ -167,5 +155,45 @@ BST::Node** BST::find_node(int value)
             address = &root;
     };
     find(root,value);
+    return address;
+}
+
+BST::Node** BST::find_parrent(int value)
+{
+    Node** address{nullptr};
+    if (root == nullptr || find_node(value) == nullptr)
+        return nullptr;
+    std::function<void(Node* root,int value)> 
+    find=[&find,&address](Node* root, int value)->void
+    {
+        if (value < root->value )
+            if(root->left->value == value)
+                address = &root;
+            else
+                find(root->left,value);
+        else if (value > root->value)
+            if(root->right->value == value)
+                address = &root;
+            else
+                find(root->right,value);
+        else
+            address = &root;
+    };
+    find(root,value);
+    return address;
+}
+
+BST::Node** BST::find_successor(int value)
+{   
+    Node** address{};
+    if (root == nullptr || find_node(value) == nullptr)
+        return nullptr;
+    Node* node{ *find_node(value)};
+    if (node->left != nullptr)
+        address = &(node->left);
+    else if (node->right != nullptr)
+        address = &(node->right);
+    else
+        address = nullptr;
     return address;
 }

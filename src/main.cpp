@@ -14,9 +14,8 @@ int main(int argc, char **argv)
         BST::Node n4{5,&n2,&n3};
         BST::Node n5{8,&n4};
         BST bb{&n5};
-        std::cout << bb.add_node(9) << std::endl;
-        std::cout << bb.get_root()->right->value << std::endl;
-        BST::Node* s {*(bb.find_node(9))};
+        std::cout << bb.add_node(7) << std::endl;
+        BST::Node* s {*(bb.find_successor(5))};
         std::cout << s->value << std::endl;
         
     }
