@@ -15,8 +15,10 @@ int main(int argc, char **argv)
         BST::Node n5{8,&n4};
         BST bb{&n5};
         std::cout << bb.add_node(7) << std::endl;
-        BST::Node* s {*(bb.find_successor(5))};
-        std::cout << s->value << std::endl;
+        std::cout << bb.delete_node(5) << std::endl;
+        std::cout<< bb.find_node(5) << std::endl;
+        std::cout<< bb.get_root()->left->right->value << std::endl;
+        std::cout << bb << std::endl;
         
     }
     else

@@ -4,6 +4,8 @@
 #include <iostream>
 #include <compare>
 #include <functional>
+#include <iomanip>
+#include <string>
 
 class BST
 {
@@ -17,7 +19,8 @@ public:
     Node** find_node(int value);
     Node** find_parrent(int value);
     Node** find_successor(int value);
-    // bool delete_node(int value);
+    bool delete_node(int value);
+    friend std::ostream& operator<<(std::ostream& os,  BST& bst);
 
 private:
 

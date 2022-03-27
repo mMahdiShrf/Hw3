@@ -25,10 +25,26 @@ BST::Node::Node(const Node& node)
 
 std::ostream& operator<<(std::ostream& os, const BST::Node& node)
 {
-    os << "node's address: " << &node << "  ****  ";
-    os << "node's left child address: " << node.left << "  ****  ";
-    os << "node's right child address: " << node.right << "  ****  ";
-    os << "node's value: " << node.value;
+    os << &node ;
+    os << std::setw(17) <<  "=> value:" << node.value ;
+    os << std::setw(13) << "left:" << node.left;
+    if (node.left==nullptr)
+        os << std::setw(25) <<"right:" << node.right  << std::endl;
+    else
+        os << std::setw(12) <<"right:" << node.right  << std::endl;
+    return os;
+}
+
+std::ostream& operator<<(std::ostream& os, BST& bst)
+{
+    std::function<void(BST::Node*)> printer = [](BST::Node* node)
+    {
+        std::cout << *node ;
+    };
+    os << std::string(92, '*') << std::endl;
+    bst.bfs(printer);
+    os << "binary search tree size: " << bst.length() << std::endl;
+    os << std::string(92, '*') << std::endl;
     return os;
 }
 
@@ -37,7 +53,7 @@ BST::Node*& BST::get_root()
     return root;
 }
 
-void BST::bfs(std::function<void(Node*& node)> func)
+void BST::bfs(std::function<void(BST::Node*& node)> func)
 {
     std::function<size_t(Node*)> height = [&](Node* root)->size_t
     {
@@ -196,4 +212,41 @@ BST::Node** BST::find_successor(int value)
     else
         address = nullptr;
     return address;
+}
+
+bool BST::delete_node(int value)
+{   
+    if (root == nullptr || find_node(value) == nullptr)
+        return false;
+    Node* node{ (*find_node(value)) };
+    if(node->left == nullptr && node->right == nullptr)
+        {   
+            *node = Node{};
+            return true;
+        }
+        
+    else if (node->left == nullptr)
+    {   
+        *node = *(node->right);
+        return true;
+    }
+    else if (node->right == nullptr)
+    {   
+        *node = *(node->left);
+        return true;
+    }
+    else
+    {   
+        Node* min_node{node->right};
+        while( min_node != nullptr && min_node->left != nullptr)
+            min_node = min_node->left;
+        int min_val{min_node->value};
+        delete_node(min_node->value);
+        //std::cout<< root->left->right->value << std::endl;
+        //std::cout << min_val << std::endl;
+        node->value = min_val;
+        return true;
+    }
+    
+    
 }
