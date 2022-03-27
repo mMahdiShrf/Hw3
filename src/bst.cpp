@@ -22,38 +22,81 @@ BST::Node::Node(const Node& node)
     this->left = node.left;
     this->right = node.right;
 }
+BST::BST()
+{
+    root = nullptr;
+}
+
+BST::BST(const BST& bst)
+{   
+    
+    std::function<Node*(Node* node)> 
+    copy = [&copy](Node* node) -> Node*
+    {   
+        if(node)
+        {   
+            Node* new_root = {new Node};
+            new_root->value = node->value;
+            std::cout << new_root->value << std::endl;
+            new_root->left=copy(node->left);
+            new_root->right=copy(node->right);
+            return new_root;
+        }
+        else
+            return NULL;
+    };
+    root =copy(bst.root);
+}
+
+BST::BST(int root_value)
+{
+    root = new Node {root_value};
+}
+
+BST::BST(BST&& bst):
+    root{std::move(bst.root)}
+{
+}
+
+ BST::~BST()
+ {
+ 	std::vector<Node*> nodes;
+ 	bfs([&nodes](BST::Node*& node){nodes.push_back(node);});
+ 	for(auto& node: nodes)
+ 		delete node;
+ }
 
 std::ostream& operator<<(std::ostream& os, const BST::Node& node)
 {
     os << &node ;
-    os << std::setw(17) <<  "=> value:" << node.value ;
+    os << std::setw(16) <<  "=> value:" << node.value ;
     os << std::setw(13) << "left:" << node.left;
     if (node.left==nullptr)
-        os << std::setw(25) <<"right:" << node.right  << std::endl;
+        os << std::setw(20) <<"right:" << node.right  << std::endl;
     else
         os << std::setw(12) <<"right:" << node.right  << std::endl;
     return os;
 }
 
-std::ostream& operator<<(std::ostream& os, BST& bst)
+std::ostream& operator<<(std::ostream& os, const BST& bst)
 {
     std::function<void(BST::Node*)> printer = [](BST::Node* node)
     {
         std::cout << *node ;
     };
-    os << std::string(92, '*') << std::endl;
+    os << std::string(76, '*') << std::endl;
     bst.bfs(printer);
     os << "binary search tree size: " << bst.length() << std::endl;
-    os << std::string(92, '*') << std::endl;
+    os << std::string(76, '*') << std::endl;
     return os;
 }
 
-BST::Node*& BST::get_root()
-{
+BST::Node*& BST::get_root() 
+{   
     return root;
 }
 
-void BST::bfs(std::function<void(BST::Node*& node)> func)
+void BST::bfs(std::function<void(BST::Node*& node)> func) const
 {
     std::function<size_t(Node*)> height = [&](Node* root)->size_t
     {
@@ -90,9 +133,7 @@ void BST::bfs(std::function<void(BST::Node*& node)> func)
     }
 }
 
-BST::BST(Node* _root):root{_root}{}
-
-size_t BST::length()
+size_t BST::length() const
 {
     std::function<size_t(Node* root)> length=[&length](Node* root)->size_t
     {
@@ -247,6 +288,24 @@ bool BST::delete_node(int value)
         node->value = min_val;
         return true;
     }
-    
-    
 }
+
+const BST& BST::operator++() const
+{
+    std::function<void(Node* node)> 
+    pluseOne = [](Node* node)
+    {
+        node->value += 1;
+    };
+    this->bfs(pluseOne);
+    return *this;
+}
+
+const BST BST::operator++(int)
+{
+    BST temp {*this};
+    ++*this;
+    return temp;
+}
+
+
