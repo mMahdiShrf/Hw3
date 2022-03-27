@@ -56,7 +56,7 @@ void BST::bfs(std::function<void(Node*& node)> func)
     };
     size_t tree_height{height(root)};
     //std::cout << tree_height << std::endl;
-    for(size_t level{1}; level <= tree_height -1; level++)
+    for(size_t level{1}; level <= tree_height ; level++)
     {   
         std::function<void(size_t level, Node* root)> applyFunc=[&](size_t level, Node* root)->void
         {   
@@ -76,4 +76,96 @@ void BST::bfs(std::function<void(Node*& node)> func)
 
 BST::BST(Node* _root):root{_root}{}
 
+size_t BST::length()
+{
+    std::function<size_t(Node* root)> length=[&length](Node* root)->size_t
+    {
+        if (root->left != nullptr && root->right != nullptr)
+            return (2 + length(root->left) + length(root->right));
+        else if (root->left != nullptr)
+            return (1 + length(root->left));
+        else if (root->right != nullptr)
+            return (1 + length(root->right)); 
+        else
+            return 0;
+    };
+    return length(root) + 1;
+}
 
+bool BST::add_node(int value)
+{
+    if (root == nullptr)
+        return false;
+    bool flag{true};
+    Node* address{new Node {value}};
+    std::function<void(Node* &root,int value)> add=[&](Node* &root, int value)->void
+    {
+        if (value < root->value )
+        {
+            if (root->left != nullptr)
+            {   
+                std::cout << "left.." << std::endl;
+                add(root->left, value);
+            } 
+            else
+            {   
+                std::cout << "put.." << std::endl;
+                
+                root->left = address;
+                return;
+            }
+        }
+        else if (value > root->value)
+        {
+            if (root->right != nullptr)
+            {   
+                std::cout << "right.." << std::endl;
+                add(root->right, value);
+            }
+            else
+            {   
+                std::cout << "pu.." << std::endl;
+                //std::cout << node << &node << std::endl;
+                root->right = address;
+                std::cout << root->right << root->right->value << std::endl;
+                return;
+
+            }
+        }
+        else
+        {
+            flag = false;
+            return;
+        }
+            
+    };
+    add(root, value);
+    if (flag) 
+        return true;
+    else 
+        return false;
+}
+
+BST::Node** BST::find_node(int value)
+{   
+    Node** address{nullptr};
+    if (root == nullptr) return nullptr;
+    std::function<void(Node* root,int value)> 
+    find=[&find,&address](Node* root, int value)->void
+    {
+        if (value < root->value )
+            if (root->left == nullptr)
+                address = nullptr;
+            else
+                find(root->left,value);
+        else if (value > root->value)
+            if (root->right == nullptr)
+                address = nullptr;
+            else
+                find(root->right,value);
+        else
+            address = &root;
+    };
+    find(root,value);
+    return address;
+}
