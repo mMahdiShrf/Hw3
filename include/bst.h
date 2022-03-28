@@ -6,16 +6,17 @@
 #include <functional>
 #include <iomanip>
 #include <string>
+#include <initializer_list>
 
 class BST
 {
 public:
-    class Node;
-    BST(int root_value);
-    BST();
+    class Node; // Node decleration
+    BST(); 
     BST(const BST& bst);
     BST(BST&& bst);
     ~BST();
+    BST(std::initializer_list<int> values);
     Node*& get_root();
     void bfs(std::function<void(Node*& node)> func) const;
     size_t length() const;
@@ -24,23 +25,23 @@ public:
     Node** find_parrent(int value);
     Node** find_successor(int value);
     bool delete_node(int value);
-    friend std::ostream& operator<<(std::ostream& os,const  BST& bst);
-    const BST& operator++ () const;
-    const BST operator++(int);
-    //BST& operator=(const BST& bst);
-    BST& operator=(BST&& bst);
-
+    friend std::ostream& operator<<(std::ostream& os,const  BST& bst); // std::cout << BST
+    const BST& operator++ () const; // ++BST
+    const BST operator++(int); // BST++
+    BST& operator=(const BST& bst); // copy version
+    BST& operator=(BST&& bst); // move version
 private:
     Node* root;
 };
 
-class BST::Node
+class BST::Node // Node definition
 {
 public:
     Node(int value, Node* left=nullptr, Node* right=nullptr);
     Node();
     Node(const Node& node);
-    friend std::ostream& operator<<(std::ostream& os, const Node& node);
+    friend std::ostream& operator<<(std::ostream& os, const Node& node); // std::cout << Node
+    // all kinds of comparing :
     std::partial_ordering operator <=> (const int _value) const {return value <=> _value;}
     bool operator==(const int _value) const { return _value == value;}
 

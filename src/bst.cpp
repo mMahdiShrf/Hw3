@@ -27,9 +27,15 @@ BST::BST()
     root = nullptr;
 }
 
+
+BST::BST(std::initializer_list<int> values) : BST()
+{   
+    for(auto value:values)
+        this->add_node(value);
+}
+
 BST::BST(const BST& bst)
 {   
-    
     std::function<Node*(Node* node)> 
     copy = [&copy](Node* node) -> Node*
     {   
@@ -45,11 +51,6 @@ BST::BST(const BST& bst)
             return NULL;
     };
     root =copy(bst.root);
-}
-
-BST::BST(int root_value)
-{
-    root = new Node {root_value};
 }
 
 BST::BST(BST&& bst):
@@ -331,5 +332,28 @@ BST& BST::operator=(BST&& bst)
     delete[] root;
     root = bst.root;
     bst.root = nullptr;
+    return *this;
+}
+
+BST& BST::operator=(const BST& bst)
+{
+    if (this == &bst)
+        return *this;
+    delete[] root;
+    std::function<Node*(Node* node)> 
+    copy = [&copy](Node* node) -> Node*
+    {   
+        if(node)
+        {   
+            Node* new_root = {new Node};
+            new_root->value = node->value;
+            new_root->left=copy(node->left);
+            new_root->right=copy(node->right);
+            return new_root;
+        }
+        else
+            return NULL;
+    };
+    root =copy(bst.root);
     return *this;
 }
