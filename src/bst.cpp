@@ -70,7 +70,10 @@ std::ostream& operator<<(std::ostream& os, const BST::Node& node)
 {
     os << &node ;
     os << std::setw(16) <<  "=> value:" << node.value ;
-    os << std::setw(13) << "left:" << node.left;
+    if (node.value < 10)
+        os << std::setw(14) << "left:" << node.left;
+    else
+        os << std::setw(13) << "left:" << node.left;
     if (node.left==nullptr)
         os << std::setw(20) <<"right:" << node.right  << std::endl;
     else
@@ -150,9 +153,12 @@ size_t BST::length() const
 }
 
 bool BST::add_node(int value)
-{
+{   
     if (root == nullptr)
-        return false;
+        {
+            root = new Node{value};
+            return true;
+        }
     bool flag{true};
     Node* address{new Node {value}};
     std::function<void(Node* &root,int value)> add=[&](Node* &root, int value)->void
@@ -193,66 +199,75 @@ bool BST::add_node(int value)
 
 BST::Node** BST::find_node(int value)
 {   
-    Node** address{nullptr};
+    //Node** ptr = new Node*;
     if (root == nullptr) return nullptr;
-    std::function<void(Node* root,int value)> 
-    find=[&find,&address](Node* root, int value)->void
-    {
+    std::function<Node**(Node* root,int value,Node** ptr)> 
+    find=[&find](Node* root, int value,Node** ptr)->Node**
+    {   
+        if (value == root->value)
+        {
+            return ptr;
+        }
         if (value < root->value )
+        {
             if (root->left == nullptr)
-                address = nullptr;
+            {
+                
+                return nullptr;
+            }
             else
-                find(root->left,value);
-        else if (value > root->value)
-            if (root->right == nullptr)
-                address = nullptr;
-            else
-                find(root->right,value);
+                return find(root->left,value,&root->left);
+        }
         else
-            address = &root;
+        {
+            if (root->right == nullptr)
+            {
+                
+                return nullptr;
+            }
+            else
+                return find(root->right,value,&root->right);
+        }
     };
-    find(root,value);
-    return address;
+    return find(root,value,&root);
 }
 
 BST::Node** BST::find_parrent(int value)
 {
-    Node** address{nullptr};
     if (root == nullptr || find_node(value) == nullptr)
         return nullptr;
-    std::function<void(Node* root,int value)> 
-    find=[&find,&address](Node* root, int value)->void
+    std::function<Node**(Node* root,int value,Node** ptr)> 
+    find=[&find](Node* root, int value,Node** ptr)->Node**
     {
         if (value < root->value )
             if(root->left->value == value)
-                address = &root;
+                return ptr;
             else
-                find(root->left,value);
+                return find(root->left,value,&root->left);
         else if (value > root->value)
             if(root->right->value == value)
-                address = &root;
+                return ptr;
             else
-                find(root->right,value);
+                return find(root->left,value,&root->left);
         else
-            address = &root;
+            return ptr;
     };
-    find(root,value);
-    return address;
+    return find(root,value,&root);
 }
 
 BST::Node** BST::find_successor(int value)
 {   
-    Node** address{};
     if (root == nullptr || find_node(value) == nullptr)
         return nullptr;
     Node* node{ *find_node(value)};
     if (node->left != nullptr)
-        address = &(node->left);
+        return find_successor(node->left->value);
     else if (node->right != nullptr)
-        address = &(node->right);
+        return find_successor(node->right->value);
+    else if(node->left != nullptr && node->right != nullptr)
+        return find_successor(node->left->value);
     else
-        address = nullptr;
-    return address;
+        return find_node(node->value);
 }
 
 bool BST::delete_node(int value)
@@ -308,4 +323,10 @@ const BST BST::operator++(int)
     return temp;
 }
 
-
+BST& BST::operator=(BST&& bst)
+{
+    delete[] root;
+    root = bst.root;
+    bst.root = nullptr;
+    return *this;
+}

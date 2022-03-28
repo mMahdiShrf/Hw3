@@ -28,10 +28,9 @@ public:
     const BST& operator++ () const;
     const BST operator++(int);
     //BST& operator=(const BST& bst);
-    //BST& operator=(BST&& bst);
+    BST& operator=(BST&& bst);
 
 private:
-
     Node* root;
 };
 
@@ -42,7 +41,7 @@ public:
     Node();
     Node(const Node& node);
     friend std::ostream& operator<<(std::ostream& os, const Node& node);
-    std::partial_ordering operator <=> (const int _value) const {return _value <=> value;}
+    std::partial_ordering operator <=> (const int _value) const {return value <=> _value;}
     bool operator==(const int _value) const { return _value == value;}
 
     int value;

@@ -2,31 +2,28 @@
 #include <gtest/gtest.h>
 #include "bst.h"
 
-void f(BST::Node* node){ node->value+=5;}
+
 
 int main(int argc, char **argv)
 {
-    if (true) // make false to run unit-tests
+    if (false) // make false to run unit-tests
     {
-        //BST::Node n1{3};
-        // BST::Node n2 {4,&n1};
-        // BST::Node n3{6};
-        // BST::Node n4{5,&n2,&n3};
-        // BST::Node n5{8,&n4};
-        BST bb{8};
-        bb.add_node(5);
-        bb.add_node(4);
-        bb.add_node(3);
-        bb.add_node(6);
-        bb.add_node(7);
-        BST& bobo {bb};
+        BST bst{};
+        bst.add_node(25);
+        bst.add_node(10);
+        bst.add_node(50);
+        bst.add_node(53);
+        bst.add_node(15);
+        bst.add_node(7);
+        BST::Node** node{bst.find_node(10)};
+        //BST& bobo {bb};
         // std::cout << bb.add_node(7) << std::endl;
         // std::cout << bb.delete_node(5) << std::endl;
-        // std::cout<< bb.find_node(5) << std::endl;
+         std::cout<< (*node)->right->value << std::endl;
         // std::cout<< bb.get_root()->left->right->value << std::endl;
         // BST bobo {bb};
         // bobo = ++bb;
-        std::cout << bobo << std::endl;
+        //std::cout << bobo << std::endl;
         
     }
     else
