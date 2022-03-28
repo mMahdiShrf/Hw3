@@ -37,7 +37,6 @@ BST::BST(const BST& bst)
         {   
             Node* new_root = {new Node};
             new_root->value = node->value;
-            std::cout << new_root->value << std::endl;
             new_root->left=copy(node->left);
             new_root->right=copy(node->right);
             return new_root;
@@ -56,6 +55,7 @@ BST::BST(int root_value)
 BST::BST(BST&& bst):
     root{std::move(bst.root)}
 {
+    bst.root = nullptr;
 }
 
  BST::~BST()
@@ -138,18 +138,20 @@ void BST::bfs(std::function<void(BST::Node*& node)> func) const
 
 size_t BST::length() const
 {
-    std::function<size_t(Node* root)> length=[&length](Node* root)->size_t
-    {
-        if (root->left != nullptr && root->right != nullptr)
-            return (2 + length(root->left) + length(root->right));
-        else if (root->left != nullptr)
-            return (1 + length(root->left));
-        else if (root->right != nullptr)
-            return (1 + length(root->right)); 
+    size_t tree_length{};
+    std::function<void(Node* root)> length=[&](Node* root)->void
+    {   
+        if (root)
+        {   
+            tree_length++;
+            length(root->right);
+            length(root->left);
+        }
         else
-            return 0;
+            return;
     };
-    return length(root) + 1;
+    length(root);
+    return tree_length;
 }
 
 bool BST::add_node(int value)
@@ -274,33 +276,34 @@ bool BST::delete_node(int value)
 {   
     if (root == nullptr || find_node(value) == nullptr)
         return false;
-    Node* node{ (*find_node(value)) };
+    Node*& node{ (*find_node(value)) };
     if(node->left == nullptr && node->right == nullptr)
         {   
-            *node = Node{};
+            free(node);
+            node=nullptr;
             return true;
         }
         
     else if (node->left == nullptr)
     {   
-        *node = *(node->right);
+        node = (node->right);
         return true;
     }
     else if (node->right == nullptr)
     {   
-        *node = *(node->left);
+        node = (node->left);
         return true;
     }
     else
     {   
-        Node* min_node{node->right};
-        while( min_node != nullptr && min_node->left != nullptr)
-            min_node = min_node->left;
-        int min_val{min_node->value};
-        delete_node(min_node->value);
+        Node* max_node{node->left};
+        while( max_node != nullptr && max_node->right != nullptr)
+            max_node = max_node->right;
+        int max_val{max_node->value};
+        delete_node(max_node->value);
         //std::cout<< root->left->right->value << std::endl;
         //std::cout << min_val << std::endl;
-        node->value = min_val;
+        node->value = max_val;
         return true;
     }
 }
