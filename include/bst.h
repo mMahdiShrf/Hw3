@@ -12,11 +12,16 @@ class BST
 {
 public:
     class Node; // Node decleration
-    BST(); 
-    BST(const BST& bst);
-    BST(BST&& bst);
-    ~BST();
+    BST();  // default constructor
+    BST(const BST& bst); // copy constructor
+    BST(BST&& bst); // move constructor
+    ~BST(); // destructor
     BST(std::initializer_list<int> values);
+    friend std::ostream& operator<<(std::ostream& os,const  BST& bst); // std::cout << BST
+    const BST& operator++ () const; // ++BST
+    const BST operator++(int); // BST++
+    BST& operator=(const BST& bst); // copy version
+    BST& operator=(BST&& bst); // move version
     Node*& get_root();
     void bfs(std::function<void(Node*& node)> func) const;
     size_t length() const;
@@ -25,11 +30,7 @@ public:
     Node** find_parrent(int value);
     Node** find_successor(int value);
     bool delete_node(int value);
-    friend std::ostream& operator<<(std::ostream& os,const  BST& bst); // std::cout << BST
-    const BST& operator++ () const; // ++BST
-    const BST operator++(int); // BST++
-    BST& operator=(const BST& bst); // copy version
-    BST& operator=(BST&& bst); // move version
+    
 private:
     Node* root;
 };

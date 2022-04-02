@@ -9,19 +9,14 @@ BST::Node::Node(int value, Node* left, Node* right) // Node constructor
     this->right = right;
 }
 
-BST::Node::Node() // Node defualt constructor
-{
-    this->value = static_cast<int>(NULL);
-    this->left = nullptr;
-    this->right = nullptr;
-}
+BST::Node::Node(): // Node defualt constructor
+    Node(static_cast<int>(NULL)) 
+{}
 
-BST::Node::Node(const Node& node) // Node copy constructor
-{
-    this->value = node.value;
-    this->left = node.left;
-    this->right = node.right;
-}
+BST::Node::Node(const Node& node): // Node copy constructor
+     Node(node.value,node.left,node.right)
+{}
+
 BST::BST() // BST defualt constructor
 {
     root = nullptr;
@@ -109,7 +104,7 @@ const BST& BST::operator++() const // ++BST
     {
         node->value += 1;
     };
-    this->bfs(pluseOne);
+    bfs(pluseOne);
     return *this;
 }
 
@@ -329,7 +324,7 @@ bool BST::delete_node(int value)
 {   
     if (root == nullptr || find_node(value) == nullptr) // can't delete what it does'nt exist
         return false;
-    Node*& node{ (*find_node(value)) };
+    Node*& node{ *find_node(value) };
     if(node->left == nullptr && node->right == nullptr) // no child situation
         {   
             free(node); // free memory which node point too
